@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    /* Minimal styling with no overlapping elements */
+    body {
+      font-family: 'Inter', sans-serif;
+      display: flex; justify-content: center; align-items: center; height: 100vh;
+      background: linear-gradient(135deg, #0a2540, #04294f);
+      color: white;
+      margin: 0;
+    }
+    button.pay-button {
+      padding: 16px 32px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      background: #06b6d4;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button.pay-button:hover {
+      background: #0284c7;
+    }
+  </style>
+</head>
+<body>
+  <button class="pay-button" id="rzp-button">Pay ₹<%= (amount/100).toFixed(2) %></button>
+
+  <script>
+    const options = {
+      "key": "<%= key_id %>", // Enter the Key ID generated from the Dashboard
+      "amount": "<%= amount %>", // Amount is in currency subunits. Default is paise for INR.
+      "currency": "INR",
+      "name": "Your Company Name",
+      "description": "Order Payment",
+      "order_id": "<%= orderId %>", //This is a Razorpay order ID.
+      "handler": function (response){
+          // You can verify payment here by sending response.razorpay_payment_id, razorpay_order_id, razorpay_signature to your server
+          alert("Payment successful! Payment ID: " + response.razorpay_payment_id);
+          window.location.href = "/"; // redirect on success
+      },
+      "prefill": {
+          "name": "<%= name %>",
+          "contact": "<%= mobile %>"
+      },
+      "theme": {
+          "color": "#06b6d4"
+      }
+    };
+
+    const rzp = new Razorpay(options);
+
+    document.getElementById('rzp-button').onclick = function(e){
+      rzp.open();
+      e.preventDefault();
+    }
+  </script>
+</body>
+</html>
